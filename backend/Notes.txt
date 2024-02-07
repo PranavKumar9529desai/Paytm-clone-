@@ -1,0 +1,175 @@
+--------------------------------Routes---------------------------
+
+// defined in indes.js 
+app.use("/api/v1" ,rootRouter) ;
+--->all req from api/v1 goes to the rootrouter 
+
+their on we separate the user and accounts routes 
+router.user("/user",userRouter);
+router.user("/accounts",accountsRouter);
+
+
+req.parms vs req.query
+->query used the access the url that is the parameter the after the question mark 
+/api/v1/accounts?userID=123, req.query.userID would be 123.
+
+
+
+->parms used to the access the dynamic parmeter in url
+router.get('/api/v1/accounts/:id')
+
+
+
+
+
+
+
+
+
+
+how to refer to other collection in mongob 
+
+what is monogodb method ?
+it is way you can define function on mongodb model ans you can use it with any model .
+
+here one example 
+
+const UserSchema = mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+  },
+  password_hash: {
+    type: String,
+    required: true,
+  },
+});
+
+
+// Method to generate a hash from plain text
+UserSchema.methods.createHash = async function (plainTextPassword) {
+
+  // Hashing user's salt and password with 10 iterations,
+  const saltRounds = 10;
+
+  // First method to generate a salt and then create hash
+  const salt = await bcrypt.genSalt(saltRounds);
+  return await bcrypt.hash(plainTextPassword, salt);
+
+  // Second mehtod - Or we can create salt and hash in a single method also
+  // return await bcrypt.hash(plainTextPassword, saltRounds);
+};
+
+// Validating the candidate password with stored hash and hash function
+UserSchema.methods.validatePassword = async function (candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password_hash);
+};
+
+
+
+---------------------JWT deep dive --------------------- 
+
+how to handle the jwt in singin route 
+
+The JWT is used to authenticate subsequent requests after the user has successfully logged in. It's not used to authenticate the login request itself.
+
+once the user is logged in then jwt is to authenticate every subsequent request .
+
+
+
+jwt not the way handle authenticaton on signin and signup routes raher it is used authenticate the subsequents req after the user signin or logged in.
+
+
+this is a common pattern in stateless API design, where the server doesn't maintain any session state between requests. Instead, the client is responsible for sending all the necessary information with each request, which includes the JWT for authenticated requests.
+
+
+
+---------------------how to ref a model in model in monogodb ------------
+
+similar analogy as foreign key 
+
+lets you reference documents in other collections by reference IDs.
+
+
+we can't just subtract balence from one and add to the other user's balence we need as it won't be atmoin trasaction
+
+
+------what are the tranasctions in mongob-------------------------------
+
+tranasctions in mongodb are atomic operations that can be performed on the database.
+
+atmoic operations are operations that either succeed or fail completely. 
+
+they can't partially succeed and leave the database in a inconsistent state.
+
+they are used to perform opeaions which are atmoic .
+
+
+
+--------------------------mongodb operators --------------------------------
+
+$in : {
+ balence : amount 
+// increase the balence by the amount if want subtract use - amount  
+}
+
+
+
+-------------------------mongodb standalones vs replica set  ------------------------------
+A MongoDB instance is just a running MongoDB server. When you install MongoDB on your computer and start it, you're running a MongoDB instance.
+
+A standalone MongoDB instance is a single MongoDB server that runs on its own. It's not connected to any other MongoDB servers. This is probably what you have right now.
+
+A replica set, on the other hand, is a group of MongoDB servers that work together. The data in a replica set is duplicated across all the servers in the set. This is done for redundancy and to ensure data is always available even if one server goes down.
+
+In a replica set, one server is the primary server, and the rest are secondary servers. All write operations go to the primary server, and then the changes are replicated to the secondary servers.
+
+Now, MongoDB transactions (which allow you to perform multiple operations as a single atomic unit) are only supported on replica sets, not on standalone instances. This is why you're seeing the error.
+
+To fix the error, you need to convert your standalone instance into a replica set. This doesn't mean you need to set up multiple servers. You can have a replica set with just one server (which is called a single-node replica set). This is what the instructions in the previous message are for.
+
+
+
+
+--------------------------Store JWT token in the localstorage -------------------------
+localstorage.setitem('token',token);
+// to store the token 
+
+localstorage.getitem('token');
+// to get the token
+
+
+
+---------------------------------how to send data from one route to another route in react ------------------------------
+very clean apporch instead of saving data then sending it from one route to another 
+
+instaed use query parms to send the data 
+
+ex      navigate("/send?id="+user._id+"&name="+user.FirstName) 
+
+------------------------------------useSearchParams hook-----------------------------------
+to get this data in the next route use the useSearchParams it let's you use the query parms in the url
+
+use the hook inside the component in which you want to use the query parms.
+ex as i wanted the query parms in sendMoney compoenet as used the hook in sendMoney component
+
+const [searchParams] = useSearchParams();
+  console.log(searchParams.get('name')); // 'user's name'
+
+
+
+------------------------------Debouncing and throttling in javascript--------------------------
+
+how do we make sure that we don't overwhelm the serever by sendin too many requests in a short period of time.
+--->so to tackle this probelm we use debouncing and throttling.
+
+debouncing is a technique that limits the rate at which a function can fire.
+--->it is used to make sure that the function is not called too many times in a short period of time.
+throttling 
+
+Diference between debouncing and throttling.
+throttling executes a function at a regular interval, while debouncing executes a function after a delay.
