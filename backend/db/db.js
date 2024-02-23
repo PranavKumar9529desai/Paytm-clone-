@@ -1,9 +1,10 @@
 const mongoose = require('mongoose') ;
 const bcrypt = require('bcrypt');
 const MongoClient = require('mongodb').MongoClient;
+require('dotenv').config()
 
 // .then(()=>{console.log("Database is Connected")});
-mongoose.connect('mongodb+srv://pranav:MxfRXkOKXcFhAW1j@cluster0.dwt4kjb.mongodb.net/Paytm')
+mongoose.connect(process.env.DATABASE_URL)
 .then(()=>{console.log("Database is connected")});
 
 const UserSchema = new mongoose.Schema({

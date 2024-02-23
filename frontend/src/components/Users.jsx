@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Button } from "./Button"
 import {useNavigate , useSearchParams} from 'react-router-dom';
 import axios from 'axios';
@@ -6,18 +6,20 @@ import axios from 'axios';
 export const Users = () => {
     const [users, setUsers] = useState([]);
     const [filter, setFilter] = useState([]);
-    var timerid ;     
+    var timerid=useRef();     
+    // as for very re-render the the timer should not change 
     const token = localStorage.getItem("token");
     // geting the token from the localstorage
 
     const debouncing = (fun,delay)=>{
-       clearTimeout(timerid);   
-    // clearing the previous timer 
-       timerid=setTimeout(fun,delay);
-    //    seting up new timer id 
-    }
+       clearTimeout(timerid.current);   
+    //clearing the previous timer 
+       timerid.current=setTimeout(fun,delay);
+   //Only call the function if no new input has been received
+     }
+
      
-    const fetchData =  ()=>{
+    const fetchData =  (fun)=>{
         axios.get("http://localhost:3000/api/v1/user/bulk/?filter="+filter,{
           headers : {
               Authorization : `bearer ${token}`
@@ -28,7 +30,7 @@ export const Users = () => {
           setUsers(response.data.users);
         })
     }
-    useEffect(()=>{debouncing(fetchData,500)},[filter]);
+    useEffect(()=>{debouncing(fetchData,1000)},[filter]);
     // useffect must have a callback funcion inside the brackets
 
     return <>
