@@ -81,7 +81,7 @@ router.post("/signup",async function(req,res){
 });
 
 
-router.post("/signin",Authmiddlware,async function(req,res){
+router.post("/signin",async function(req,res){
    const { UserName , Password } = req.body ;
    console.log(Password);
 
@@ -99,10 +99,12 @@ router.post("/signin",Authmiddlware,async function(req,res){
      const userID = user._id;
      const hasedPassword = user.Password ;
    //   using validatePassword method defined inside the user.js
+     const token = jwt.sign({_id:userID},JWT_SECRET);
      const  isValid = await User.validatePassword(Password,hasedPassword);
       if(isValid){
         return res.status(200).json({
           msg : "Sucessfully logged in !",
+          jwt : token,
         })
       }  
    } 

@@ -25,7 +25,7 @@ export const Users = () => {
       })
         .then(response=>{
           console.log(response.data.users);
-          setUsers(response.data.users)
+          setUsers(response.data.users);
         })
     }
     useEffect(()=>{debouncing(fetchData,500)},[filter]);

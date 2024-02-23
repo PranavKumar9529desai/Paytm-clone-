@@ -3,7 +3,8 @@ import { BottomWarning } from "../components/BottomWarming"
 import { Button } from "../components/Button"
 import { Heading } from "../components/Heading"
 import { InputBox } from "../components/InputBox"
-import { SubHeading } from "../components/Subheading"
+import { SubHeading } from "../components/Subheading";
+import {useNavigate} from 'react-router-dom';
 import axios from 'axios';
 
 export const SignUp = () => {
@@ -11,6 +12,7 @@ export const SignUp = () => {
    const [Password ,setPassword] = useState('');
    const [FirstName ,setFirstName] = useState('');
    const [LastName ,setLastName] = useState('');
+   const navigate = useNavigate();
 
     return <div className="bg-slate-300 h-screen flex justify-center">
     <div className="flex flex-col justify-center">
@@ -39,6 +41,8 @@ export const SignUp = () => {
               Password,
              })
              localStorage.setItem("token",response.data.jwt);
+             navigate('/dashboard');
+
             //  storing the jwt token in the localstorage 
           }} label={"Sign up"} />
         </div>
